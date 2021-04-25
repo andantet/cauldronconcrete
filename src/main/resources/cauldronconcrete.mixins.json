@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.andante.cauldronconcrete.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ConcretePowderBlockMixin", "ItemEntityMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

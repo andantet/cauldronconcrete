@@ -1,0 +1,82 @@
+plugins {
+    id 'fabric-loom' version '0.7-SNAPSHOT'
+    id 'maven-publish'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = project.mod_id
+group = project.maven_group
+
+if (System.env.CI == "true") {
+    version = "${project.mod_version}+a${System.env.GITHUB_RUN_NUMBER}.${project.minecraft_version}-fabric"
+} else {
+    version = "${project.mod_version}+${project.minecraft_version}-fabric"
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
+    maven { url "https://maven.shedaniel.me" }
+}
+
+dependencies {
+    // base
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    // runtime utils
+    modRuntime "io.github.prospector:modmenu:${project.mod_menu_version}"
+    modRuntime "com.github.joaoh1:OkZoomer:${project.okzoomer_version}"
+    modRuntime "com.github.jellysquid3:sodium-fabric:${project.sodium_version}"
+    modRuntime "com.github.jellysquid3:lithium-fabric:${project.lithium_version}"
+    modRuntime "com.github.jellysquid3:phosphor-fabric:${project.phosphor_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+
+    def targetVersion = 8
+    if (JavaVersion.current().isJava9Compatible()) {
+        it.options.release = targetVersion
+    }
+}
+
+java {}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/andantedevs/cauldronconcrete")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
+            }
+        }
+    }
+}
