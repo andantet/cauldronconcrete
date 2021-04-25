@@ -15,24 +15,12 @@ if (System.env.CI == "true") {
     version = "${project.mod_version}+${project.minecraft_version}-fabric"
 }
 
-repositories {
-    maven { url "https://jitpack.io" }
-    maven { url "https://maven.shedaniel.me" }
-}
+repositories {}
 
 dependencies {
-    // base
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-    // runtime utils
-    modRuntime "io.github.prospector:modmenu:${project.mod_menu_version}"
-    modRuntime "com.github.joaoh1:OkZoomer:${project.okzoomer_version}"
-    modRuntime "com.github.jellysquid3:sodium-fabric:${project.sodium_version}"
-    modRuntime "com.github.jellysquid3:lithium-fabric:${project.lithium_version}"
-    modRuntime "com.github.jellysquid3:phosphor-fabric:${project.phosphor_version}"
 }
 
 processResources {
